@@ -1,0 +1,42 @@
+# Large data / generated outputs
+data/
+test_data/raw/
+results/
+logs/
+work/
+.nextflow*
+.snakemake/
+containers/*.sif
+
+# Common bioinformatics outputs
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+*.bam
+*.sam
+*.cram
+*.bai
+*.crai
+*.vcf
+*.vcf.gz
+*.h5ad
+*.h5
+*.rds
+*.RDS
+*.Rdata
+*.loom
+
+# Local/system/cache
+.DS_Store
+__pycache__/
+.ipynb_checkpoints/
+.env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editor workspace settings
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
