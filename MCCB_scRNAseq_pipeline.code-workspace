@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../MengJuWu/Wu/MengJuWu-Wu-202606-scRNAseq"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "MengJuWu-Wu-202606-scRNAseq"
+	}
+}
