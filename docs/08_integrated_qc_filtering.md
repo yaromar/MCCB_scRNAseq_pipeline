@@ -299,3 +299,55 @@ Potential future enhancements include:
 - support for additional QC metrics;
 - optional post-clustering QC review;
 - support for multi-modal datasets.
+
+
+
+note: 
+Prefer exclusion decisions supported by multiple complementary QC signals.
+
+However, this is a guiding principle rather than an absolute rule.
+Exceptionally severe QC abnormalities may justify exclusion when
+supported by dataset-specific evidence of compromised cell quality.
+
+QC metrics are not necessarily statistically independent.
+For example, detected genes, total UMIs, and genes-per-UMI
+complexity are mathematically related.
+
+
+Exception: extreme mitochondrial enrichment
+
+Very high mitochondrial fractions may indicate severely compromised
+transcriptomes, particularly when accompanied by:
+
+- very low detected-gene counts;
+- low total UMIs;
+- reduced transcriptome complexity;
+- strong enrichment in a particular library;
+- a distinct low-quality population in QC distributions.
+
+Do not automatically apply a universal mitochondrial cutoff.
+
+Instead, evaluate the extreme mitochondrial tail using the
+observed QC distributions and determine whether additional
+exclusion criteria are justified.
+
+Document any dataset-specific thresholds and their rationale.
+
+
+Critically, inspect both removed AND retained cells.
+
+For retained cells:
+
+- What fraction exceeds mitochondrial thresholds such as
+  10%, 15%, 20%, 25%, and 50%?
+- Are extremely high-mitochondrial cells also low-feature
+  or low-UMI?
+- Are these cells disproportionately concentrated in
+  particular libraries?
+- Does the proposed filtering policy leave a substantial
+  population with clearly compromised transcriptomes?
+
+If necessary, revise the filtering criteria and rerun Stage 08.
+
+The initial filtered object should be considered provisional
+until these checks are complete.

@@ -45,6 +45,28 @@ Normalization is performed using the SoupX-corrected soupx_counts assay.
 
 The original counts assay must remain unchanged.
 
+### Counts-only fallback when soupx_counts is unavailable
+
+If `soupx_counts` is unavailable because upstream ambient-RNA correction
+cannot be run (for example, missing raw droplet matrices), Stage 09 may proceed
+using `counts` as the normalization input **only if this adaptation is
+explicitly documented**.
+
+When this fallback is used, record all of the following in stage metadata and
+stage documentation:
+
+* why `soupx_counts` is unavailable;
+* which assay was used for normalization (`counts`);
+* what adaptation checks were applied before proceeding;
+* that this is a project-specific adaptation, not a silent default.
+
+Required adaptation checks for counts-only fallback:
+
+* counts assay exists and is non-negative;
+* feature and cell identifiers are unique;
+* required sample/library metadata are present;
+* stage outputs preserve provenance of the fallback decision.
+
 ⸻
 
 ### Required metadata
@@ -229,6 +251,11 @@ multi-library datasets.
 Independent normalization avoids estimating size factors across biologically
 distinct conditions that may differ substantially in cellular composition.
 
+Optional: if independently estimated per-library size factors are later
+rescaled to a shared reference (for example, a global median) to improve
+comparability in the combined object, this must be documented as **technical
+scale alignment**. It must not be described as integration or batch correction.
+
 ⸻
 
 ### Use scran deconvolution normalization
@@ -275,6 +302,10 @@ soupx_counts
 
 for methods requiring count data.
 
+When counts-only fallback is used, replace the above assay reference with the
+documented fallback assay (`counts`) in project-stage outputs, and preserve the
+original integer counts unchanged.
+
 ⸻
 
 ### Variance modeling
@@ -307,6 +338,13 @@ combineVar(
 
 This produces a single library-aware ranking while giving equal influence to
 each sequencing library.
+
+Important interpretation note:
+
+`combineVar(method = "fisher", equiweight = TRUE)` combines **significance
+evidence** across per-library variance models. It is not equivalent to
+averaging biological variance magnitudes, and these two operations should not
+be treated as interchangeable.
 
 Genes variable in only one library are not automatically discarded because they
 may represent condition-specific or rare populations.
@@ -398,6 +436,8 @@ The stage must verify
 * all libraries share an identical feature space;
 * gene filtering retains at least one feature;
 * all size factors are finite and positive;
+* if any post-normalization scale-alignment step is applied, aligned size
+        factors are also finite and positive;
 * variance-model rows remain synchronized;
 * inherited feature annotations are preserved;
 * row metadata remain synchronized across libraries;
@@ -405,6 +445,34 @@ The stage must verify
 * combined object preserves feature order;
 * combined object preserves cell uniqueness;
 * required assays and metadata are written successfully.
+
+Recommended additional validation for robustness:
+
+* targeted normalization sensitivity check (for example, one alternative
+        `computeSumFactors` setting);
+* HVG stability diagnostics between primary and alternative settings using:
+        * overlap metrics (for example, Jaccard);
+        * rank concordance (for example, Spearman).
+
+If sensitivity results indicate materially unstable HVG behavior without a clear diagnostic basis, document a decision checkpoint before proceeding.
+
+### Extreme size-factor assessment
+
+Cells with rescaled scran size factors below 0.05 were examined to assess potential normalization instability.
+
+A total of 50 cells met this criterion. Most had low UMI counts (approximately 500–800), with correspondingly low estimated size factors. Several cells exhibited unusually low gene complexity relative to their UMI counts, including:
+
+* PT1_TECHREP1_ATGTCCCCATGGTCCT-1: 3,363 UMIs, 181 detected genes, rescaled size factor 0.0201.
+* PT1_TECHREP1_AACCCAATCAGCAAGG-1: 3,547 UMIs, 155 detected genes, rescaled size factor 0.0259.
+* PT1_TECHREP3_GTGCGGTCAAACCGTG-1: 5,079 UMIs, 158 detected genes, rescaled size factor 0.0422.
+
+These observations suggest that some extreme size factors may reflect low RNA content or highly concentrated expression profiles. However, the underlying causes cannot be established from these metrics alone.
+
+No additional cells were excluded at Stage 9. The established Stage 8 QC criteria remain unchanged.
+
+The extreme-size-factor cells will be flagged for inspection during Stage 10 dimensionality reduction, particularly to determine whether they disproportionately influence principal components or form technical clusters.
+
+The normalization sensitivity analysis demonstrated high HVG stability, but this does not independently establish the accuracy of individual size-factor estimates.
 
 ⸻
 
@@ -467,3 +535,13 @@ Potential future extensions include
 * support for deviance-based feature selection (scry);
 * automated HVG sensitivity analyses;
 * configurable feature-selection strategies for multi-sample studies.
+
+## Implementation caution
+
+When deriving per-library HVG ranks and top-gene flags, ensure that logical
+filters and rank-based row subsets are applied in the **same row order**.
+Do not apply a logical vector from an unsorted table to a separately sorted
+rank table.
+
+Also, name per-library columns according to their true semantics. For example,
+do not label mean-expression columns as detected-cell counts.
