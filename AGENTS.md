@@ -20,6 +20,20 @@ When Yaro asks to mirror an analysis step into the pipeline:
 6. Do not hard-code collaborator paths, sample IDs, or conditions.
 7. Document how the module can be run on future projects.
 
+## Origin-specific caution
+
+Some methodological guidance originated from a dataset with one pooled library
+per condition and no independent biological replicates.
+
+When generalizing steps, treat those choices as project-specific examples unless
+explicitly validated as pipeline defaults for broader replicated designs.
+
+Document what is:
+
+* general principle;
+* configurable parameter;
+* project-specific decision that requires reassessment for new datasets.
+
 ## Module development checklist
 
 When adding or modifying a module:

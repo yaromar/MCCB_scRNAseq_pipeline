@@ -62,7 +62,8 @@ is_ribosomal <- grepl(
 )
 ```
 
-This is appropriate for the Ceol human melanocyte dataset and should be checked
+This regex worked well in one prior human dataset used during method
+development and should always be validated on the current annotation source
 with `sort(unique(gene_symbols[is_ribosomal]))` and `sum(is_ribosomal)` before
 using the resulting feature class in QC.
 

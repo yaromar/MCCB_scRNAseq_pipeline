@@ -132,6 +132,10 @@ Cluster-independent simulation produced:
 
 and was therefore adopted as the pipeline default.
 
+This is a current implementation default, not a universal methodological rule.
+For new datasets, reassess whether cluster-aware mode materially improves
+doublet annotation quality and document any project-specific override.
+
 ### Annotation-only philosophy
 
 This stage **never removes cells**.

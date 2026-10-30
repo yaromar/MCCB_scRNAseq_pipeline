@@ -218,11 +218,11 @@ log-normalized expression values.
 No Harmony, fastMNN, Seurat integration, Scanorama, or other batch-correction
 method is applied.
 
-The experiment contains one pooled library per biological condition.
-Sample, library, and condition are therefore perfectly confounded.
+When a dataset contains one pooled library per biological condition,
+sample, library, and condition are effectively confounded.
 
-Removing sample-associated variation would also risk removing the biological
-condition of interest.
+In that design, removing sample-associated variation may also remove the
+biological condition of interest.
 
 The pipeline must preserve sample-associated structure and describe it
 explicitly rather than classify it as purely technical or biological.

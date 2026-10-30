@@ -403,10 +403,10 @@ Methods intentionally not used include
 * Seurat integration
 * Scanorama
 
-The experiment contains one pooled library per biological condition.
-Condition, library, and batch are therefore perfectly confounded.
+When a dataset contains one pooled library per biological condition,
+condition, library, and batch are effectively confounded.
 
-Cross-library normalization or integration would risk removing genuine
+In that design, cross-library normalization or integration may remove genuine
 condition-associated biological differences while offering no principled way to
 separate technical and biological effects.
 

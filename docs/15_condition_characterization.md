@@ -17,6 +17,20 @@ chemokine, or other signaling-source genes across annotated populations.
 ### Stage 15D — Validation and integrated summary
 Validates Stage 15 component outputs and generates a machine-readable and
 human-readable summary of the completed condition-characterization stage.
+
+## Scope note for reuse
+
+Stage 15 guidance combines:
+
+* general statistical principles that should hold across projects;
+* configurable analysis choices;
+* project-specific examples from the original non-replicated pooled design.
+
+Named labels such as sgCtrl and sgEzh2 are illustrative case-study identifiers,
+not required condition names or a required two-condition structure.
+
+For new datasets, document which Stage 15 decisions are retained, overridden,
+or replaced based on experimental design and biological replication.
 ---
 # Core purpose
 Once the cellular atlas and biological annotation framework are finalized, the

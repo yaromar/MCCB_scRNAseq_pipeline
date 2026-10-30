@@ -39,6 +39,19 @@ ordering, branch weights, and projection behavior.
 Characterizes accepted trajectories using curated biological programs,
 selected markers, and genome-wide pseudotime modeling.
 
+## Scope note for reuse
+
+Stage 16 contains both reusable trajectory-analysis principles and
+project-specific examples from the original pooled, non-replicated design.
+
+Any condition-specific labels, accepted-case narratives, or example trajectory
+calls should be treated as case-study context, not guaranteed outcomes for new
+datasets.
+
+Trajectory eligibility, orientation, and interpretation must be reassessed for
+each project based on replication structure, confounding pattern, and available
+biological validation evidence.
+
 ---
 
 # Core purpose

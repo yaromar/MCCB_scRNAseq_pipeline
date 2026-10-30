@@ -13,3 +13,7 @@ Current implementation priority:
 5. quantification module later: Cell Ranger / STARsolo
 6. cell-level QC later
 7. Seurat/Scanpy downstream modules later
+
+Several later-stage documents in docs/ describe methodological design
+specifications and output contracts. They should not be interpreted as evidence
+that every described stage is already implemented in executable pipeline code.
