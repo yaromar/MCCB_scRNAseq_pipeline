@@ -120,6 +120,8 @@ Recommended cluster-level ranking summaries:
 
 No single ranking metric should be treated as universally optimal.
 
+Complete pairwise statistics may be stored in serialized marker-result objects, with a manifest identifying their location and contents. Annotation-facing TSV exports may contain summarized statistics, provided the underlying full pairwise results remain accessible and reproducible.
+
 ---
 
 ## Primary versus sensitivity rankings
@@ -181,6 +183,8 @@ For every cluster:
    - unresolved continuum.
 
 The stage must allow a cluster to remain unresolved.
+
+When available, incorporate upstream cluster-separation, parameter-sensitivity, sample-composition, and QC diagnostics into the Stage 11 evidence summary. These should identify clusters requiring additional review but should not independently determine biological identity, annotation confidence, or exclusion.
 
 ---
 
@@ -318,6 +322,8 @@ Confidence should be based on:
 - reference agreement;
 - stability across sensitivity analyses.
 
+Computational stability and cluster separation are not sufficient to assign biological annotation confidence. Before marker-based biological review, annotation confidence should remain unresolved or pending. Assign confidence only after evaluating positive and competing lineage markers, marker prevalence, QC characteristics, and relevant reference evidence.
+
 ---
 
 ## Cross-sample marker consistency
@@ -335,6 +341,22 @@ Do not call the results statistically replicated conserved markers unless the
 experimental design contains genuine biological replication.
 
 Minimum cells per sample/cluster should be configurable.
+
+Level 1 — Expression consistency
+
+* Mean expression.
+* Detection fraction.
+* Presence of marker genes across samples.
+
+Level 2 — Discrimination consistency
+
+* Within-sample cluster-versus-rest detection difference.
+* Within-sample AUC or equivalent effect size.
+* Agreement in marker direction/ranking.
+
+Level 2 provides stronger evidence that a marker remains cluster-specific.
+
+Also  missing cluster–sample combinations count as zero cells when determining eligibility.
 
 ---
 
@@ -503,3 +525,8 @@ Fine analysis must recompute lineage-specific:
 
 Global marker results remain provenance but do not replace compartment-specific
 marker discovery.
+
+
+
+## Figures
+For multi-sample datasets, prefer donor- or library-faceted visualizations when overlays obscure sample-specific expression or composition patterns.

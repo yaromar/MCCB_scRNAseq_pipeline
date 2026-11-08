@@ -38,12 +38,24 @@ from the canonical dataset.
 
 ### Required assays
 
-* counts
-* soupx_counts
+- `counts`
 
-Normalization is performed using the SoupX-corrected soupx_counts assay.
+### Optional assays
 
-The original counts assay must remain unchanged.
+- `soupx_counts`
+
+### Normalization input
+
+The normalization input assay is configurable.
+
+When suitable SoupX-corrected counts are available, the workflow
+may use `soupx_counts`.
+
+Otherwise, normalization may use the original `counts` assay.
+
+The selected assay and rationale must be recorded in stage metadata.
+
+All original assays must be preserved without modification.
 
 ### Counts-only fallback when soupx_counts is unavailable
 
@@ -112,6 +124,7 @@ scuttle::logNormCounts()
 
 * scran_precluster
 * size_factor_within_sample
+- `size_factor_rescaled` (when cross-library scale alignment is applied)
 
 ⸻
 
@@ -296,11 +309,7 @@ These values are intended for
 * neighborhood graph construction;
 * most downstream exploratory analyses.
 
-The corrected counts remain available in
-
-soupx_counts
-
-for methods requiring count data.
+The original counts assay is always preserved. When available, soupx_counts is also retained. The assay used for normalization is recorded explicitly.
 
 When counts-only fallback is used, replace the above assay reference with the
 documented fallback assay (`counts`) in project-stage outputs, and preserve the
@@ -346,8 +355,12 @@ evidence** across per-library variance models. It is not equivalent to
 averaging biological variance magnitudes, and these two operations should not
 be treated as interchangeable.
 
+When donors contribute unequal numbers of technical libraries, equal library weighting does not provide equal donor weighting. This should be considered when interpreting combined HVG rankings, particularly when donor and batch effects are confounded.
+
 Genes variable in only one library are not automatically discarded because they
 may represent condition-specific or rare populations.
+
+Library-specific normalization and variance modeling should retain biological donor, technical replicate, and processing batch identifiers. Multiple technical libraries from the same donor must not be interpreted as independent biological replicates.
 
 ⸻
 
@@ -366,8 +379,7 @@ Current defaults are
 
 The primary production feature set consists of the top 5000 genes.
 
-Selecting slightly more features is generally safer for heterogeneous tumor
-datasets than selecting too few.
+The primary HVG count is configurable and should reflect dataset complexity, cell-state heterogeneity, and downstream stability diagnostics. The default of 5,000 genes reflects the original pipeline application and is not intended as a universal recommendation.
 
 ⸻
 
@@ -389,27 +401,37 @@ continue to use the complete expression matrix.
 
 ⸻
 
-### No cross-library normalization
+### Cross-library normalization and integration
 
-The combined object contains independently normalized libraries.
+Size factors are estimated independently within each sequencing library.
 
-No additional cross-library depth rescaling is performed.
+Because independently estimated size factors may have arbitrary
+relative scales, a documented scale-alignment step may be applied
+before constructing the combined normalized expression matrix.
 
-Methods intentionally not used include
+For example, per-library size factors may be rescaled to a shared
+reference median.
 
-* multiBatchNorm()
-* Harmony
-* fastMNN()
-* Seurat integration
-* Scanorama
+This adjustment establishes a common numerical normalization scale.
+It does not remove batch effects, correct donor-associated variation,
+or guarantee biological comparability between libraries.
 
-When a dataset contains one pooled library per biological condition,
-condition, library, and batch are effectively confounded.
+Importantly, such alignment assumes that differences in the
+library-wide reference scale should not be preserved as biological
+differences. This assumption should be evaluated in the context of
+the experimental design.
 
-In that design, cross-library normalization or integration may remove genuine
-condition-associated biological differences while offering no principled way to
-separate technical and biological effects.
+Batch correction and integration are separate decisions and are not
+performed automatically during Stage 09.
 
+When biological conditions, donors, and processing batches are
+confounded, technical and biological effects cannot be reliably
+separated from the available data.
+
+Any integration or batch-correction strategy must therefore be
+evaluated and justified for the specific dataset.
+
+One methodological nuance: Aligning medians across libraries is not guaranteed to improve biological comparability. It imposes a reference-scale assumption. 
 ⸻
 
 ### No PCA
@@ -456,23 +478,36 @@ Recommended additional validation for robustness:
 
 If sensitivity results indicate materially unstable HVG behavior without a clear diagnostic basis, document a decision checkpoint before proceeding.
 
+
+
 ### Extreme size-factor assessment
 
-Cells with rescaled scran size factors below 0.05 were examined to assess potential normalization instability.
+Inspect the distributions of estimated size factors within each
+library and identify extreme outliers.
 
-A total of 50 cells met this criterion. Most had low UMI counts (approximately 500–800), with correspondingly low estimated size factors. Several cells exhibited unusually low gene complexity relative to their UMI counts, including:
+For unusually small or large size factors, examine:
 
-* PT1_TECHREP1_ATGTCCCCATGGTCCT-1: 3,363 UMIs, 181 detected genes, rescaled size factor 0.0201.
-* PT1_TECHREP1_AACCCAATCAGCAAGG-1: 3,547 UMIs, 155 detected genes, rescaled size factor 0.0259.
-* PT1_TECHREP3_GTGCGGTCAAACCGTG-1: 5,079 UMIs, 158 detected genes, rescaled size factor 0.0422.
+- total UMI counts;
+- detected-gene counts;
+- transcriptomic complexity;
+- mitochondrial percentage;
+- library identity;
+- potential dominance by a small number of highly expressed genes.
 
-These observations suggest that some extreme size factors may reflect low RNA content or highly concentrated expression profiles. However, the underlying causes cannot be established from these metrics alone.
+Extreme size factors may reflect low RNA content, composition bias,
+technical artifacts, or legitimate biological differences.
 
-No additional cells were excluded at Stage 9. The established Stage 8 QC criteria remain unchanged.
+They should not automatically trigger cell exclusion.
 
-The extreme-size-factor cells will be flagged for inspection during Stage 10 dimensionality reduction, particularly to determine whether they disproportionately influence principal components or form technical clusters.
+If substantial outliers are present, document their prevalence,
+characteristics, and potential implications for downstream analyses.
 
-The normalization sensitivity analysis demonstrated high HVG stability, but this does not independently establish the accuracy of individual size-factor estimates.
+Retain relevant QC annotations for Stage 10 evaluation.
+
+Normalization sensitivity analyses can assess the stability of
+feature selection but do not independently validate individual
+size-factor estimates.
+
 
 ⸻
 

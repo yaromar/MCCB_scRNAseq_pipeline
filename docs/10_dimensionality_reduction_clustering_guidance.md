@@ -218,8 +218,25 @@ log-normalized expression values.
 No Harmony, fastMNN, Seurat integration, Scanorama, or other batch-correction
 method is applied.
 
-When a dataset contains one pooled library per biological condition,
-sample, library, and condition are effectively confounded.
+The original pipeline was developed for a dataset containing one pooled
+library per biological condition, without independent biological
+replication at the condition level.
+
+In that design, sample, library, and condition are confounded, and
+removing sample-associated variation may also remove biological
+variation of interest.
+
+Other datasets may have multiple biological replicates, technical
+replicates, paired samples, multiple processing batches, or more
+complex experimental designs.
+
+The decision to apply batch correction or integration must therefore
+be evaluated for each dataset based on its experimental design and
+biological objectives.
+
+In particular, biological and technical sources of variation should
+not be assumed separable when their corresponding metadata variables
+are confounded.
 
 In that design, removing sample-associated variation may also remove the
 biological condition of interest.
@@ -654,9 +671,26 @@ statistically validated perturbation effects.
 
 For each diagnostic PC:
 
-* fit a descriptive linear model against sample identity;
-* calculate sample-associated R²;
-* export omnibus p-values and FDR.
+- fit a descriptive linear model against sample identity;
+- calculate sample-associated R²;
+- report the association descriptively without cell-level inferential
+  p-values or FDR.
+
+These associations are exploratory diagnostics rather than biological
+replicate-level statistical tests.
+
+Cells from the same biological sample are not independent replicates.
+Consequently, cell-level p-values from PC-versus-sample models can
+overstate statistical evidence for sample-associated structure.
+
+Sample-associated variation may reflect biological differences,
+technical effects, or both.
+
+When biological donor, library, and batch identifiers are available,
+report associations at the appropriate metadata levels while
+acknowledging confounding.
+
+No PC should be removed based only on sample association.
 
 These statistics are diagnostic only.
 

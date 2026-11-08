@@ -82,15 +82,16 @@ Sparse count matrices should remain sparse throughout QC metric calculation.
 * 5 MAD default
 * configurable
 
+The MAD multiplier is a conservative starting point rather than a universally optimal threshold; its suitability should be evaluated using library-specific distributions and downstream integrated-QC diagnostics.
+
 Thresholds should be stored alongside the QC annotations to ensure complete
 reproducibility.
 
 Implementation note for this workflow:
 - For library size and detected feature counts, calculate adaptive thresholds on
   log-transformed values such as `log2(sum + 1)` and `log2(detected + 1)` rather
-  than on the raw count scale. Raw-count MAD thresholds are strongly right-skewed
-  and can become negative, which makes the lower-tail rule effectively flag
-  nearly every cell.
+  than on the raw count scale. Raw-scale count distributions are often strongly right-skewed, and median-minus-MAD lower thresholds can become negative. Because UMI and detected-feature counts are nonnegative, such thresholds flag no cells and are therefore uninformative. Applying the lower-tail threshold to log-transformed values generally produces more useful adaptive cutoffs.
+
 - This is the reason the project QC script uses log-transformed metrics for the
   `qc_low_library` and `qc_low_features` tests.
 - A raw upper-tail `qc_high_library` / `qc_high_features` rule is not used in the
@@ -103,15 +104,20 @@ Implementation note for this workflow:
   sample or shown in separate facets to avoid a misleading single-color threshold
   line representing every sample.
 
+When technical replicate libraries are available, calculate QC thresholds separately for each library while retaining biological donor and technical-replicate identifiers. Summaries may be aggregated by donor for interpretation, but technical replicate libraries must not be treated as independent biological replicates.
+
 ## Candidate QC flags
-Recommended flags include:
+
+Default candidate flags:
 qc_low_library
 qc_low_features
 qc_high_mito
 qc_low_complexity
+qc_candidate_low_quality
+
+Optional diagnostic flags:
 qc_high_library
 qc_high_features
-qc_candidate_low_quality
 
 ## Diagnostic plots
 ### Required plots:
