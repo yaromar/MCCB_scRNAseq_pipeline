@@ -138,7 +138,7 @@ The stage must verify:
 - required assays exist
 - unique feature IDs
 - unique cell barcodes
-- `rowData(sce)$Symbol` exists
+- Verify gene-symbol annotations when available, using a configurable feature-annotation column. Their absence should not prevent scDblFinder execution when unique feature identifiers are available.
 - no negative counts
 - no missing values
 - minimum number of cells
